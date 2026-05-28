@@ -1,0 +1,15 @@
+.git
+.gitignore
+.venv
+venv
+__pycache__
+*.pyc
+dataset
+data
+uploads
+project
+New folder
+*.md
+!README.md
+*.txt
+!requirements.txt

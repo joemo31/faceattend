@@ -1,0 +1,10 @@
+# Desktop app needs GUI OpenCV (not headless) and Pillow.
+# In your venv, replace headless OpenCV first:
+#   pip uninstall -y opencv-contrib-python-headless opencv-python-headless
+#   pip install -r requirements-local.txt
+#
+# Then run the desktop app:
+#   python faceattend.py
+
+opencv-contrib-python>=4.8.0
+Pillow>=10.0.0

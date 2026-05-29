@@ -1,6 +1,6 @@
 # FaceAttend
 
-REST API for registering student faces and marking attendance from uploaded photos. Optional local scripts use a webcam and OpenCV LBPH for offline demos.
+REST API and desktop app for registering student faces and marking attendance from uploaded photos or webcam capture.
 
 ## How it works
 
@@ -12,11 +12,10 @@ flowchart LR
     C -->|yes| D[attendance.json]
     C -->|no| E[Error response]
   end
-  subgraph local [Optional local scripts]
-    F[Webcam] --> G[capture_faces.py]
-    G --> H[dataset/]
-    H --> I[train_lbph.py]
-    I --> J[recognize_webcam.py]
+  subgraph desktop [Desktop app]
+    F[Webcam or file] --> G[faceattend.py]
+    G --> H[face_recognition]
+    H --> I[data/attendance.json]
   end
 ```
 
@@ -26,11 +25,29 @@ flowchart LR
 
 Interactive API docs: **http://localhost:8000/docs**
 
-### Optional local workflow (webcam)
+## Desktop app (all-in-one GUI)
 
-1. `python scripts/capture_faces.py --name "Alice"` — saves grayscale images under `dataset/Alice/`.
-2. `python scripts/train_lbph.py` — trains `data/trainer.yml`.
-3. `python scripts/recognize_webcam.py` — live recognition from the webcam.
+Run FaceAttend as a single program with webcam, registration, and attendance in one window. It uses the same logic and data files as the API (`data/face_encodings.json`, `data/attendance.json`).
+
+**Requirements:** install local dependencies (GUI OpenCV, not headless):
+
+```bash
+pip uninstall -y opencv-contrib-python-headless opencv-python-headless
+pip install -r requirements-local.txt
+```
+
+```bash
+python faceattend.py
+```
+
+| Tab | What it does |
+|-----|----------------|
+| **Register** | Capture or upload a photo to register a student ID |
+| **Mark attendance** | Recognize a face and log attendance (optional course name) |
+| **Students** | List registered student IDs |
+| **Attendance log** | View recent attendance records |
+
+Use **Start API server** in the app header if you also want REST access at http://localhost:8000/docs.
 
 ## Quick start with Docker
 
@@ -95,9 +112,10 @@ On Windows, `face_recognition` / `dlib` may need [Visual Studio Build Tools](htt
 faceattend/
 ├── app/
 │   ├── main.py           # FastAPI routes
+│   ├── gui.py            # Desktop application
 │   ├── face_service.py   # Register / recognize
 │   └── attendance.py     # Attendance log
-├── scripts/              # Optional webcam + LBPH tools
+├── faceattend.py         # Launch desktop app
 ├── Dockerfile
 ├── docker-compose.yml
 └── requirements.txt
